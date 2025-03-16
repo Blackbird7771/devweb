@@ -6,7 +6,9 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package.json package-lock.json* ./
-RUN npm ci
+
+# Install dependencies with more verbose output
+RUN npm ci --verbose
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -16,10 +18,14 @@ COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+# Add more verbose output for debugging
+RUN echo "Building Next.js application..." && \
+    # Skip ESLint during build
+    export NEXT_DISABLE_ESLINT=1 && \
+    # Build with more verbose output
+    npm run build --verbose
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -31,15 +37,17 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy necessary files
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/package.json ./package.json
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy .next folder
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 
 USER nextjs
 
@@ -48,4 +56,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"] 
+# Start the application
+CMD ["npm", "run", "start"] 

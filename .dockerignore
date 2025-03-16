@@ -12,11 +12,6 @@ out
 .git
 .gitignore
 
-# Docker
-Dockerfile
-.dockerignore
-docker-compose.yml
-
 # Misc
 README.md
 .DS_Store
