@@ -1,21 +1,17 @@
-import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import About from '@/components/About';
-import Projects from '@/components/Projects';
-import Skills from '@/components/Skills';
-import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import MinimalHero from '../components/MinimalHero';
+import SimpleAbout from '../components/SimpleAbout';
+import SimpleContact from '../components/SimpleContact';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Header />
-      <main>
-        <Hero />
-        <About />
-        <Projects />
-        <Skills />
-        <Contact />
+      <main className="container mx-auto px-4 py-8 pt-24">
+        <MinimalHero />
+        <SimpleAbout />
+        <SimpleContact />
       </main>
       <Footer />
     </div>
