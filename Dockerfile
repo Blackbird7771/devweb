@@ -8,15 +8,14 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Copy build script
-COPY build.sh ./
-RUN chmod +x build.sh
-
 # Install dependencies
 RUN npm ci || (echo "Failed to install dependencies" && exit 1)
 
 # Copy the rest of the application
 COPY . .
+
+# Set proper permissions for the build script
+RUN chmod +x build.sh
 
 # Set environment variables
 ENV NODE_ENV=production
